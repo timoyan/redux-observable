@@ -1,9 +1,9 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import UserSearchInput from '../components/UserSearchInput';
-import UserSearchResults from '../components/UserSearchResults';
-import { searchUsers } from '../actions';
+import React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router";
+import UserSearchInput from "../components/UserSearchInput";
+import UserSearchResults from "../components/UserSearchResults";
+import { SearchUserRequest } from "../reducers/searchUser";
 
 class UserSearch extends React.Component {
   constructor(props) {
@@ -22,43 +22,37 @@ class UserSearch extends React.Component {
   }
 
   handleUserSearch(query) {
-    this.props.searchUsers(query);
+    this.props.SearchUserRequest({ query: query });
   }
 
   render() {
-    const {
-      query,
-      results,
-      searchInFlight
-    } = this.props;
+    const { query, results, loading } = this.props;
     return (
       <div>
         <Link
-          to='/admin'
+          to="/admin"
           style={{
-            display: 'block',
+            display: "block",
             marginBottom: 10
-          }}>
+          }}
+        >
           Admin Panel
         </Link>
         <UserSearchInput
           defaultValue={query}
           onChange={this.handleUserSearch}
         />
-        <UserSearchResults
-          results={results}
-          loading={searchInFlight}
-        />
+        <UserSearchResults results={results} loading={loading} />
       </div>
     );
   }
 }
 
 export default connect(
-  ({ routing, userResults, searchInFlight }) => ({
+  ({ routing, github }) => ({
     query: routing.locationBeforeTransitions.query.q,
-    results: userResults,
-    searchInFlight
+    results: github.results,
+    loading: github.loading
   }),
-  { searchUsers }
+  { SearchUserRequest }
 )(UserSearch);
